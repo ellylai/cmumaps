@@ -1,5 +1,5 @@
 # Script that combines other json-to-database scripts to populate entire database
-# python scripts/json-to-database/database-population.py
+# python serialization/deserializers/floorplans/database-population.py 
 from prisma import Prisma
 import asyncio
 from building import create_building

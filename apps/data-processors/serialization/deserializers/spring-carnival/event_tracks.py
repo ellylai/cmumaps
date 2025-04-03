@@ -34,6 +34,33 @@ def get_tags(tracks):
             tags.add("Health/Wellness")
     return list(tags)
 
+def get_tags(tracks):
+    tags = set()
+    for track in tracks:
+        # self-mapping tracks
+        if track in [
+            "CMU Tradition",
+            "Food",
+            "Awards/Celebration",
+            "Exhibit/Tour",
+            "Health/Wellness",
+            "Alumni",
+        ]:
+            tags.add(track)
+        # track maps to a different tag
+        elif track == "Reunion":
+            tags.add("Alumni")
+        elif track == "Buggy":
+            tags.add("CMU Tradition")
+        elif track == "Scotch'n'Soda" or track == "Entertainment":
+            tags.add("Performance")
+        elif track == "Libraries" or track == "Open House/Reception":
+            tags.add("Exhibit/Tour")
+        elif track == "Athletics":
+            tags.add("Health/Wellness")
+    return list(tags)
+
+
 async def create_event_tracks():
     await prisma.connect()
 
@@ -49,7 +76,11 @@ async def create_event_tracks():
         if eventId not in eventId_set:
             # only create eventTracks if that eventId has not been seen before,
             # therefore making each eventTrack pair unique
+<<<<<<< Updated upstream
             tags = get_tags(tracks) # tags is tracks (mapping)
+=======
+            tags = get_tags(tracks)
+>>>>>>> Stashed changes
             for track in tags:
                 # Create EventTrack entry
                 eventTrack = {

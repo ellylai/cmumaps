@@ -28,7 +28,11 @@ async def drop_specified_tables(table_names):
 async def create_tracks():
     await prisma.connect()
 
+<<<<<<< Updated upstream
     tracks_set = {
+=======
+    tracks_set = [
+>>>>>>> Stashed changes
         "CMU Tradition",
         "Food",
         "Awards/Celebration",
@@ -36,7 +40,11 @@ async def create_tracks():
         "Health/Wellness",
         "Alumni",
         "Performance",
+<<<<<<< Updated upstream
     }
+=======
+    ]
+>>>>>>> Stashed changes
 
     tracks_data = [{"trackName": track} for track in tracks_set]
 
@@ -48,6 +56,6 @@ async def create_tracks():
 
 
 if __name__ == "__main__":
-    asyncio.run(drop_specified_tables(["Tracks"]))
+    asyncio.run(drop_specified_tables(["Track"]))
     asyncio.run(create_tracks())
     print("Created table: Tracks")
