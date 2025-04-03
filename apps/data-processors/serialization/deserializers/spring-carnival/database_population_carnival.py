@@ -1,9 +1,5 @@
 # Script to populate all carnival tables using data from the file cmumaps-data/spring-carnival/carnival_events.json
-<<<<<<< Updated upstream
-# python scripts/json-to-database-carnival/database_population_carnival.py
-=======
 # python serialization/deserializers/spring-carnival/database_population_carnival.py
->>>>>>> Stashed changes
 
 from prisma import Prisma  # type: ignore
 import asyncio

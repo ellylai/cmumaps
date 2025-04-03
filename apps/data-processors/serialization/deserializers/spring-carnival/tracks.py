@@ -28,11 +28,7 @@ async def drop_specified_tables(table_names):
 async def create_tracks():
     await prisma.connect()
 
-<<<<<<< Updated upstream
-    tracks_set = {
-=======
     tracks_set = [
->>>>>>> Stashed changes
         "CMU Tradition",
         "Food",
         "Awards/Celebration",
@@ -40,11 +36,7 @@ async def create_tracks():
         "Health/Wellness",
         "Alumni",
         "Performance",
-<<<<<<< Updated upstream
-    }
-=======
     ]
->>>>>>> Stashed changes
 
     tracks_data = [{"trackName": track} for track in tracks_set]
 

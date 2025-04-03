@@ -76,11 +76,7 @@ async def create_event_tracks():
         if eventId not in eventId_set:
             # only create eventTracks if that eventId has not been seen before,
             # therefore making each eventTrack pair unique
-<<<<<<< Updated upstream
-            tags = get_tags(tracks) # tags is tracks (mapping)
-=======
             tags = get_tags(tracks)
->>>>>>> Stashed changes
             for track in tags:
                 # Create EventTrack entry
                 eventTrack = {
