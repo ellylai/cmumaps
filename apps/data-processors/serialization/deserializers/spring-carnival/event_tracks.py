@@ -8,31 +8,6 @@ from tracks import drop_specified_tables
 
 prisma = Prisma()
 
-def get_tags(tracks):
-    tags = set()
-    for track in tracks:
-        # self-mapping tracks
-        if track in [
-            "CMU Tradition",
-            "Food",
-            "Awards/Celebration",
-            "Exhibit/Tour",
-            "Health/Wellness",
-            "Alumni",
-        ]:
-            tags.add(track)
-        # track maps to a different tag
-        elif track == "Reunion":
-            tags.add("Alumni")
-        elif track == "Buggy":
-            tags.add("CMU Tradition")
-        elif track == "Scotch'n'Soda" or track == "Entertainment":
-            tags.add("Performance")
-        elif track == "Libraries" or track == "Open House/Reception":
-            tags.add("Exhibit/Tour")
-        elif track == "Athletics":
-            tags.add("Health/Wellness")
-    return list(tags)
 
 def get_tags(tracks):
     tags = set()
