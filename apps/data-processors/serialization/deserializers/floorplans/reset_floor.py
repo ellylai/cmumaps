@@ -1,5 +1,7 @@
 # Script that resets (drops) every model of one floor and repopulates it
-# python scripts/json-to-database/reset_floor.py <buildingCode> <floorLevel>
+# python serialization/deserializers/floorplans/reset_floor.py <buildingCode> <floorLevel>
+# For example: 
+# python serialization/deserializers/floorplans/reset_floor.py TEP 1
 from prisma import Prisma  # type: ignore
 import asyncio
 import sys
@@ -11,7 +13,7 @@ from node import create_nodes
 
 prisma = Prisma()
 
-
+# Clear the target floor from target building
 async def drop_floor(building: str, floor: str):
     await prisma.connect()
 
@@ -61,6 +63,7 @@ async def drop_floor(building: str, floor: str):
     await prisma.disconnect()
 
 
+# Repopulate target building/floor
 async def repopulate_floor(building: str, floor: str):
     asyncio.run(create_floor(target_building=building, target_floor=floor))
     asyncio.run(create_rooms(target_building=building, target_floor=floor))

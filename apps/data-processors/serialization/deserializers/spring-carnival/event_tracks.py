@@ -1,5 +1,5 @@
-# Script to populate EventTracks table using data from the file cmumaps-data/spring-carnival/carnival_events.json
-# python scripts/json-to-database-carnival/event_tracks.py
+# Script to populate EventTrack table using data from the file cmumaps-data/spring-carnival/carnival_events.json
+# python serialization/deserializers/spring-carnival/event_tracks.py
 
 from prisma import Prisma  # type: ignore
 import asyncio
@@ -8,11 +8,11 @@ from tracks import drop_specified_tables
 
 prisma = Prisma()
 
-
+# Get tags based on a self-defined function track->tag
 def get_tags(tracks):
     tags = set()
     for track in tracks:
-        # self-mapping tracks
+        # Self-mapping tracks
         if track in [
             "CMU Tradition",
             "Food",
@@ -22,7 +22,7 @@ def get_tags(tracks):
             "Alumni",
         ]:
             tags.add(track)
-        # track maps to a different tag
+        # Track that maps to a different tag
         elif track == "Reunion":
             tags.add("Alumni")
         elif track == "Buggy":
@@ -35,7 +35,7 @@ def get_tags(tracks):
             tags.add("Health/Wellness")
     return list(tags)
 
-
+# Populate EventTrack table based on tracks and their mapped tags
 async def create_event_tracks():
     await prisma.connect()
 
@@ -49,11 +49,11 @@ async def create_event_tracks():
         eventId = data[event]["eventId"]
         tracks = data[event]["tracks"]
         if eventId not in eventId_set:
-            # only create eventTracks if that eventId has not been seen before,
+            # Only create eventTracks if that eventId has not been seen before,
             # therefore making each eventTrack pair unique
             tags = get_tags(tracks)
             for track in tags:
-                # Create EventTrack entry
+                # Create one EventTrack entry per tag per track
                 eventTrack = {
                     "eventId": eventId,
                     "trackName": track,
@@ -61,7 +61,7 @@ async def create_event_tracks():
                 eventId_set.add(eventId)
                 eventTracks_data.append(eventTrack)
 
-    # Create all Events entries
+    # Create all EventTrack entries
     async with prisma.tx() as tx:
         await tx.eventtrack.create_many(data=eventTracks_data)
 

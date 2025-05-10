@@ -1,4 +1,5 @@
 # Script to populate the Building table of the database using buildings.json
+# python serialization/deserializers/floorplans/building.py 
 from prisma import Prisma  # type: ignore
 import asyncio
 import json

@@ -1,4 +1,5 @@
 # create Alias table of the database using floorPlanMap.json
+# python serialization/deserializers/floorplans/alias.py 
 from prisma import Prisma  # type: ignore
 import asyncio
 import json
@@ -6,7 +7,7 @@ import json
 prisma = Prisma()
 
 
-# Drop and populate Alias table
+# Drop Alias table
 async def drop_alias_table():
     await prisma.connect()
 
@@ -28,23 +29,25 @@ async def drop_alias_table():
 if __name__ == "__main__":
     asyncio.run(drop_alias_table())
 
-
+# Populate Alias table
 async def create_alias(target_building=None, target_floor=None):
     await prisma.connect()
-
+    
+    # Open json file
     file_path = "cmumaps-data/floorplans/searchMap.json"
     with open(file_path, "r") as file:
         data = json.load(file)
 
     for building in data:
-        # skip empty buildings
+        # Skip empty buildings
         if not data[building]:
             continue
 
-        # skip outside because we will be using OSM
+        # Skip outside buildings because we will be using OSM
         if building == "outside":
             continue
-
+        
+        # Get alias data
         alias_data = []
         for floor in data[building]:
             for room in data[building][floor]:
@@ -60,7 +63,8 @@ async def create_alias(target_building=None, target_floor=None):
                             }
                         )
 
-        # if target_building and/or target_floor specified
+        # If target_building and/or target_floor specified in the function,
+        # only populate target (building or floor) aliases
         for node in alias_data:
             if target_building or target_floor:
                 target_alias = []

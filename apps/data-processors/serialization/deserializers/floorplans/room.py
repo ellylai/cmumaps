@@ -1,5 +1,6 @@
-# Script to populate the Rooms table
-# skip empty buildings and outside
+# Script to populate the Room table
+# Skips empty buildings and outside
+# python serialization/deserializers/floorplans/room.py
 from prisma import Prisma  # type: ignore
 import asyncio
 import json
@@ -7,7 +8,7 @@ import json
 prisma = Prisma()
 
 
-# Drop and populate Element and Room tables
+# Drop Element table
 async def drop_room_tables():
     await prisma.connect()
 
@@ -29,7 +30,7 @@ async def drop_room_tables():
 if __name__ == "__main__":
     asyncio.run(drop_room_tables())
 
-
+# Populate Room table
 async def create_rooms(target_building=None, target_floor=None):
     await prisma.connect()
 
@@ -38,11 +39,11 @@ async def create_rooms(target_building=None, target_floor=None):
         data = json.load(file)
 
     for building in data:
-        # skip empty buildings
+        # Skip empty buildings
         if not data[building]:
             continue
 
-        # skip outside because we will be using OSM
+        # Skip outside because we will be using OSM
         if building == "outside":
             continue
 

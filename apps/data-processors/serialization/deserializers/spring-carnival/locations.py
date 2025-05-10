@@ -1,5 +1,5 @@
 # Script to populate Location table using data from the file cmumaps-data/spring-carnival/carnival_events.json
-# python scripts/json-to-database-carnival/locations.py
+# python serialization/deserializers/spring-carnival/locations.py
 
 from prisma import Prisma  # type: ignore
 import asyncio
@@ -8,7 +8,7 @@ from tracks import drop_specified_tables
 
 prisma = Prisma()
 
-
+# Populate Location table
 async def create_locations():
     await prisma.connect()
 
@@ -24,15 +24,16 @@ async def create_locations():
         latitude = data[event]["latitude"]
         longitude = data[event]["longitude"]
 
-        # Create Event Occurence entry
+        # Create Location entry
         location = {
             "locationId": locationId,
             "locationName": locationName,
         }
+        # If latitude and longitude exist, add them to the database.
         if latitude != "" and longitude != "":
             location["latitude"] = latitude
             location["longitude"] = longitude
-
+        # Only populate locations that have not been seen yet (locations should be unique)
         if locationId not in location_set:
             location_data.append(location)
             location_set.add(locationId)
@@ -46,5 +47,6 @@ async def create_locations():
 if __name__ == "__main__":
     # Drop Location table
     asyncio.run(drop_specified_tables(["Location"]))
+    # Popualte Location table
     asyncio.run(create_locations())
     print("Created table: Location")

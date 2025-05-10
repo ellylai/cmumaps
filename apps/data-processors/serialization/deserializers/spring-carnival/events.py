@@ -1,5 +1,6 @@
 # Script to populate Event table using data from the file cmumaps-data/spring-carnival/carnival_events.json
-# python scripts/json-to-database-carnival/events.py
+# Precondition: Track table is populated
+# python serialization/deserializers/spring-carnival/events.py
 
 from prisma import Prisma  # type: ignore
 import asyncio
@@ -8,7 +9,7 @@ from tracks import drop_specified_tables
 
 prisma = Prisma()
 
-
+# Populate Event table
 async def create_events():
     await prisma.connect()
 
@@ -30,14 +31,14 @@ async def create_events():
             "title": title,
             "description": description,
         }
-        if req != "none":
+        if req != "none": # Entry requirement for this event
             event["req"] = req
 
         if eventId not in eventId_set:
             events_data.append(event)
             eventId_set.add(eventId)
 
-    # Create all Events entries
+    # Create all Event entries
     async with prisma.tx() as tx:
         await tx.event.create_many(data=events_data)
 

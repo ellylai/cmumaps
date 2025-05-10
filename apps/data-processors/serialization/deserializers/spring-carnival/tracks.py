@@ -1,6 +1,6 @@
 # Script to populate Track table using data from the file cmumaps-data/spring-carnival/carnival_events.json
 # Run this script first before events.py!
-# python scripts/json-to-database-carnival/tracks.py
+# python serialization/deserializers/spring-carnival/tracks.py
 
 from prisma import Prisma  # type: ignore
 import asyncio
@@ -8,7 +8,7 @@ import json
 
 prisma = Prisma()
 
-
+# Function (used in other files as well) to drop a list of tables
 async def drop_specified_tables(table_names):
     await prisma.connect()
 
@@ -24,7 +24,7 @@ async def drop_specified_tables(table_names):
 
     await prisma.disconnect()
 
-
+# Populate Track table
 async def create_tracks():
     await prisma.connect()
 

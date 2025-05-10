@@ -1,5 +1,5 @@
 # Script to populate EventOccurrence table using data from the file cmumaps-data/spring-carnival/carnival_events.json
-# python scripts/json-to-database-carnival/event_occurrences.py
+# python serialization/deserializers/spring-carnival/event_occurrences.py
 
 from prisma import Prisma  # type: ignore
 import asyncio
@@ -8,7 +8,7 @@ from tracks import drop_specified_tables
 
 prisma = Prisma()
 
-
+# Create EventOccurrence for Spring Carnival
 async def create_event_occurrences():
     await prisma.connect()
 
@@ -33,7 +33,8 @@ async def create_event_occurrences():
             "locationId": locationId,
         }
         event_occurrences_data.append(event)
-    # Create all Events entries
+    
+    # Create all EventOccurrence entries
     async with prisma.tx() as tx:
         await tx.eventoccurrence.create_many(data=event_occurrences_data)
 

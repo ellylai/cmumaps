@@ -1,11 +1,11 @@
-# Script to extract descriptions for Events table
-# python scripts/json-to-database-carnival/events_cleaning.py
+# Script to extract text descriptions for Events table (not used in finalized population)
+# python serialization/deserializers/spring-carnival/events_cleaning.py
 
 from bs4 import BeautifulSoup  # type: ignore
 from prisma import Prisma  # type: ignore
 import asyncio
 
-
+# Use BeautifulSoup library to extract text content from html content
 def extract_description(html_content):
     soup = BeautifulSoup(html_content, "html.parser")
     text = soup.get_text(separator=" ", strip=True)
@@ -18,7 +18,7 @@ def extract_description(html_content):
 
 prisma = Prisma()
 
-
+# Extract descriptions
 async def extract_event_descriptions():
     await prisma.connect()
 

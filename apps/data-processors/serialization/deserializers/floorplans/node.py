@@ -1,6 +1,6 @@
 # Script to populate Node table of the database using all_graph.json
-# skip outside nodes
-# python scripts/json-to-database/node.py
+# Skips outside nodes
+# python serialization/deserializers/floorplans/node.py 
 from prisma import Prisma  # type: ignore
 import asyncio
 import json
@@ -8,7 +8,7 @@ import json
 prisma = Prisma()
 
 
-# Drop and populate Node table
+# Drop Node table
 async def drop_node_table():
     await prisma.connect()
 
@@ -26,7 +26,7 @@ async def drop_node_table():
 
     await prisma.disconnect()
 
-
+# Function to get outside ids (so we can skip them)
 def get_outside_rooms():
     with open("cmumaps-data/floorplans/outside-graph.json", "r") as file:
         outside_data = json.load(file)
@@ -34,7 +34,7 @@ def get_outside_rooms():
     outside_rooms = [outsideId for outsideId in outside_data]
     return outside_rooms
 
-
+# Populate Node table
 async def create_nodes(target_building=None, target_floor=None):
     await prisma.connect()
 
@@ -61,14 +61,14 @@ async def create_nodes(target_building=None, target_floor=None):
             "floorLevel": floorLevel,
         }
         if node["nodeId"] in outside_rooms:
-            continue
+            continue # Skip outside
 
         if roomId:
-            node["roomId"] = roomId
+            node["roomId"] = roomId # Some nodes are rooms
 
         node_data.append(node)
 
-    # if target_building and/or target_floor specified
+    # If target_building and/or target_floor specified, only populate that building/floor
     for node in node_data:
         if target_building or target_floor:
             target_nodes = []

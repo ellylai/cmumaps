@@ -1,4 +1,4 @@
-# Script that combines other json-to-database scripts to populate entire database
+# Script that combines other deserializer (json-to-database) scripts to populate entire database
 # python serialization/deserializers/floorplans/database-population.py 
 from prisma import Prisma
 import asyncio
@@ -11,8 +11,7 @@ from edge import create_edges
 
 prisma = Prisma()
 
-# Drop all tables
-
+# Drop all tables using Prisma
 
 async def drop_all_tables():
     await prisma.connect()
@@ -36,7 +35,7 @@ async def drop_all_tables():
 if __name__ == "__main__":
     asyncio.run(drop_all_tables())
 
-    # Populate all tables
+    # Populate all tables using functions imported from other files
     asyncio.run(create_building())
     print("created buildings")
     asyncio.run(create_floor())

@@ -1,7 +1,7 @@
 # Script to populate Edge table of the database using all_graph.json
-# excludes outside, neigbors who are missing in node or out node,
+# excludes outside nodes, neighbors who are missing in node or out node, and
 # edges whose in node or out node are missing a roomId
-# python scripts/json-to-database/edge.py
+# python serialization/deserializers/floorplans/edge.py 
 from prisma import Prisma  # type: ignore
 import asyncio
 import json
@@ -27,7 +27,7 @@ async def drop_edge_table():
 
     await prisma.disconnect()
 
-
+# Function to get outside rooms (so that we can ignore them when creating edges)
 def get_outside_rooms():
     with open("cmumaps-data/floorplans/outside-graph.json", "r") as file:
         outside_data = json.load(file)
@@ -35,7 +35,7 @@ def get_outside_rooms():
     outside_rooms = [outsideId for outsideId in outside_data]
     return outside_rooms
 
-
+# Populate Edge table
 async def create_edges(target_building=None, target_floor=None):
     await prisma.connect()
 
@@ -57,17 +57,20 @@ async def create_edges(target_building=None, target_floor=None):
             outNodeId = edge
 
             edge_node = {"inNodeId": inNodeId, "outNodeId": outNodeId}
-
+            
+            # Skip edges that lead nowhere
             if outNodeId not in data:
                 continue
+            # Skip edges that connect to the outside
             if inNodeId in outside_rooms or outNodeId in outside_rooms:
                 continue
+            # Skip edges where the incoming or outgoing node have no roomId
             if not data[nodeId]["roomId"] or not data[outNodeId]["roomId"]:
                 continue
 
             edge_data.append(edge_node)
 
-    # if target_building and/or target_floor specified
+    # If target_building and/or target_floor specified, only populate those edges
     for node in edge_data:
         if target_building or target_floor:
             target_edges = []
@@ -84,8 +87,8 @@ async def create_edges(target_building=None, target_floor=None):
 
             edge_data = target_edges
 
-    # sometimes will get prisma.engine.errors.UnprocessableEntityError
-    # if not populate in batches
+    # Sometimes will get prisma.engine.errors.UnprocessableEntityError (Ellyse got this error)
+    # Then populate in batches if get this error
     batch_size = 30000
 
     for i in range(0, len(edge_data), batch_size):
@@ -94,12 +97,13 @@ async def create_edges(target_building=None, target_floor=None):
         async with prisma.tx() as tx:
             await tx.edge.create_many(data=batch)
 
+    # If no UnprocessableEntityError, then can populate all at once (comment out above code)
     # async with prisma.tx() as tx:
     #     await tx.edge.create_many(data=edge_data)
 
     await prisma.disconnect()
 
-
+# Drop and populate Edge table
 if __name__ == "__main__":
     asyncio.run(drop_edge_table())
     asyncio.run(create_edges())

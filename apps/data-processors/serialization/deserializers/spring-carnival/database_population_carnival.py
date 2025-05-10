@@ -11,6 +11,7 @@ from event_occurrences import create_event_occurrences
 
 prisma = Prisma()
 
+# Use previously defined functions to drop and populate the following tables
 if __name__ == "__main__":
     asyncio.run(
         drop_specified_tables(

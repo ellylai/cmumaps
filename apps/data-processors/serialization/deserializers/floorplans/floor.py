@@ -1,13 +1,14 @@
 # Script to populate the Floor table of the database using placements.json
 # Precondition: Building table must be populated
-# excludes outside
+# Excludes populating the outside
+# python serialization/deserializers/floorplans/floor.py 
 from prisma import Prisma  # type: ignore
 import asyncio
 import json
 
 prisma = Prisma()
 
-
+# Drop floor table
 async def drop_floor_tables():
     await prisma.connect()
 
@@ -25,7 +26,7 @@ async def drop_floor_tables():
 
     await prisma.disconnect()
 
-
+# Populate floor table (includes option to only populate one building/floor)
 async def create_floor(target_building=None, target_floor=None):
     await prisma.connect()
 
@@ -42,7 +43,7 @@ async def create_floor(target_building=None, target_floor=None):
 
     for buildingCode in data:
         if buildingCode == "outside":
-            continue
+            continue # Skip the outside
 
         for floorLevel in data[buildingCode]:
             centerLatitude = data[buildingCode][floorLevel]["center"]["latitude"]
@@ -68,7 +69,7 @@ async def create_floor(target_building=None, target_floor=None):
 
             floors_data.append(floor)
 
-    # if target_building and/or target_floor specified
+    # If target_building and/or target_floor specified, only populate that building/floor
     for node in floors_data:
         if target_building or target_floor:
             target_nodes = []
